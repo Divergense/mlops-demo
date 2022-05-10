@@ -1,0 +1,58 @@
+rule all:
+    input:
+        "data/interim/cleaned.csv",
+        "data/interim/interim_train.csv",
+        "data/interim/interim_test.csv",
+        "data/processed/processed_train.csv",
+        "data/processed/processed_test.csv",
+        "models/rforest.pkl",
+        "reports/figures/rforest.pkl.png"
+
+rule drop_columns:
+    input:
+        "data/raw/googleplaystore.csv"
+    output:
+        "data/interim/cleaned.csv"
+    shell:
+        "python -m src.data.drop_columns {input} {output}"
+
+rule split_data:
+    input:
+        "data/interim/cleaned.csv"
+    output:
+        "data/interim/interim_train.csv",
+        "data/interim/interim_test.csv"
+    shell:
+        "python -m src.data.split {input} {output}"
+
+rule clean_features_train:
+    input:
+        "data/interim/interim_train.csv"
+    output:
+        "data/processed/processed_train.csv"
+    shell:
+        "python -m src.features.clean_features {input} {output}"
+
+rule clean_features_test:
+    input:
+        "data/interim/interim_test.csv"
+    output:
+        "data/processed/processed_test.csv"
+    shell:
+        "python -m src.features.clean_features {input} {output}"
+
+rule train:
+    input:
+        "data/processed/processed_train.csv"
+    output:
+        "models/rforest.pkl"
+    shell:
+        "python -m src.models.train_model {input} {output}"
+
+rule predict_test_data:
+    input:
+        "models/rforest.pkl"
+    output:
+        "reports/figures/rforest.pkl.png"
+    shell:
+        "python -m src.models.predict_model {input} data/processed/processed_test.csv"
