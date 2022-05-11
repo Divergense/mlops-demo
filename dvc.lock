@@ -92,6 +92,7 @@ stages:
       size: 12420952
   predict_test_data:
     cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv
+      reports/metrics.json
     deps:
     - path: data/processed/processed_test.csv
       md5: 96a7fb6813f90635024f0098a8b01006
@@ -100,9 +101,13 @@ stages:
       md5: c909117d9f6b18faf57619c38690d45a
       size: 12420952
     - path: src/models/predict_model.py
-      md5: 29b6a5bb96c3491bf6f5ebf3397fe5b3
-      size: 1240
+      md5: fae95d7269dbdda471154cc991b7d909
+      size: 1764
     params:
       params.json:
         REPORT_PATH: reports/figures/
         Y_COLUMN: Rating
+    outs:
+    - path: reports/metrics.json
+      md5: be2ff9e981e63dabd645f5c100f03437
+      size: 143

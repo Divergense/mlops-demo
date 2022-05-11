@@ -58,7 +58,7 @@ stages:
       - models/rforest.pkl
 
   predict_test_data:
-    cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv
+    cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv reports/metrics.json
     deps:
       - models/rforest.pkl
       - data/processed/processed_test.csv
@@ -67,3 +67,5 @@ stages:
       - params.json:
         - Y_COLUMN
         - REPORT_PATH
+    metrics:
+      - reports/metrics.json
