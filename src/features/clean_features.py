@@ -1,15 +1,18 @@
 import click
-from src.utility.wrappers import read_process_write
+
 from src.utility import processing
-
-
-MEDIAN_SIZE = 13000000
+from src.params_file import PARAMS_FILE
+from src.utility.processing import load_json_params
+from src.utility.wrappers import read_process_write
 
 
 @click.command()
 @click.argument("input", type=click.Path(exists=True))
 @click.argument("output", type=click.Path())
 def clean_features(input: str, output: str):
+    params = load_json_params(PARAMS_FILE)
+    MEDIAN_SIZE = params['MEDIAN_SIZE']
+
     def process(df):
         # transform Categories into integers
         df = processing.category_into_int(df, "Category", "Category_c")

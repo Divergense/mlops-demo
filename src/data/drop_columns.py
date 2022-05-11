@@ -1,9 +1,9 @@
 import click
 from typing import Tuple
+
+from src.params_file import PARAMS_FILE
 from src.utility.wrappers import read_process_write
-
-
-UNNECESSARY_COLUMNS = ["Last Updated", "Current Ver", "Android Ver", "App"]
+from src.utility.processing import load_json_params
 
 
 @click.command()
@@ -12,7 +12,9 @@ UNNECESSARY_COLUMNS = ["Last Updated", "Current Ver", "Android Ver", "App"]
 @click.option("--columns", multiple=True)
 def drop_columns(input: str, output: str, columns: Tuple[str] = None):
     if len(columns) == 0:
-        columns = UNNECESSARY_COLUMNS
+        print(PARAMS_FILE)
+        params = load_json_params(PARAMS_FILE)
+        columns = params['UNNECESSARY_COLUMNS']
     else:
         columns = list(columns)
 

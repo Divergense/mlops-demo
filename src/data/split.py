@@ -1,11 +1,9 @@
 import click
 from sklearn.model_selection import train_test_split
 
+from src.params_file import PARAMS_FILE
+from src.utility.processing import load_json_params
 from src.utility.wrappers import read_process_write
-
-
-RANDOM_STATE = 12345
-Y_COLUMN = "Rating"
 
 
 @click.command()
@@ -19,6 +17,8 @@ def split(input: str, output: str, test_size: float = 0.8):
         input - path to source data file
         output -
     """
+    params = load_json_params(PARAMS_FILE)
+    RANDOM_STATE = params['RANDOM_STATE']
 
     def process(df):
         df_train, df_test = train_test_split(

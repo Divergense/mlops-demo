@@ -1,0 +1,69 @@
+stages:
+  drop_columns:
+    cmd: python -m src.data.drop_columns data/raw/googleplaystore.csv data/interim/cleaned.csv
+    deps:
+      - data/raw/googleplaystore.csv
+      - src/data/drop_columns.py
+    params:
+      - params.json:
+        - UNNECESSARY_COLUMNS
+    outs:
+      - data/interim/cleaned.csv
+
+  split_data:
+    cmd: python -m src.data.split data/interim/cleaned.csv data/interim/interim_train.csv data/interim/interim_test.csv
+    deps:
+      - data/interim/cleaned.csv
+      - src/data/split.py
+    params:
+      - params.json:
+        - RANDOM_STATE
+    outs:
+      - data/interim/interim_train.csv
+      - data/interim/interim_test.csv
+
+  clean_features_train:
+    cmd: python -m src.features.clean_features data/interim/interim_train.csv data/processed/processed_train.csv
+    deps:
+      - data/interim/interim_train.csv
+      - src/features/clean_features.py
+    params:
+      - params.json:
+        - MEDIAN_SIZE
+    outs:
+      - data/processed/processed_train.csv
+
+  clean_features_test:
+    cmd: python -m src.features.clean_features data/interim/interim_test.csv data/processed/processed_test.csv
+    deps:
+      - data/interim/interim_test.csv
+      - src/features/clean_features.py
+    params:
+      - params.json:
+        - MEDIAN_SIZE
+    outs:
+      - data/processed/processed_test.csv
+
+  train:
+    cmd: python -m src.models.train_model data/processed/processed_train.csv models/rforest.pkl
+    deps:
+      - data/processed/processed_train.csv
+      - src/models/train_model.py
+    params:
+      - params.json:
+        - RANDOM_STATE
+        - Y_COLUMN
+        - MODEL_EXTENSION
+    outs:
+      - models/rforest.pkl
+
+  predict_test_data:
+    cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv
+    deps:
+      - models/rforest.pkl
+      - data/processed/processed_test.csv
+      - src/models/predict_model.py
+    params:
+      - params.json:
+        - Y_COLUMN
+        - REPORT_PATH

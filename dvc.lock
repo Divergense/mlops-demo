@@ -1,0 +1,108 @@
+schema: '2.0'
+stages:
+  drop_columns:
+    cmd: python -m src.data.drop_columns data/raw/googleplaystore.csv data/interim/cleaned.csv
+    deps:
+    - path: data/raw/googleplaystore.csv
+      md5: 11dd3f23ab726058adad4a8e261d10e9
+      size: 1360155
+    - path: src/data/drop_columns.py
+      md5: ba698b3979cfb5290f188633c39482e0
+      size: 907
+    params:
+      params.json:
+        UNNECESSARY_COLUMNS:
+        - Last Updated
+        - Current Ver
+        - Android Ver
+        - App
+    outs:
+    - path: data/interim/cleaned.csv
+      md5: 02239ab226ee925e7e44ffad6f209731
+      size: 695730
+  split_data:
+    cmd: python -m src.data.split data/interim/cleaned.csv data/interim/interim_train.csv
+      data/interim/interim_test.csv
+    deps:
+    - path: data/interim/cleaned.csv
+      md5: 02239ab226ee925e7e44ffad6f209731
+      size: 695730
+    - path: src/data/split.py
+      md5: 2f601d6f3340e6a33a277945c8ef6c2f
+      size: 985
+    params:
+      params.json:
+        RANDOM_STATE: 12345
+    outs:
+    - path: data/interim/interim_test.csv
+      md5: 2a641f8b1bab75135403295d7063dd37
+      size: 557985
+    - path: data/interim/interim_train.csv
+      md5: e7b562abaa9469220c78da5e051c9870
+      size: 137817
+  clean_features_train:
+    cmd: python -m src.features.clean_features data/interim/interim_train.csv data/processed/processed_train.csv
+    deps:
+    - path: data/interim/interim_train.csv
+      md5: e7b562abaa9469220c78da5e051c9870
+      size: 137817
+    - path: src/features/clean_features.py
+      md5: 605694a3c6e1b74b91763187e50a9440
+      size: 1986
+    params:
+      params.json:
+        MEDIAN_SIZE: 13000000
+    outs:
+    - path: data/processed/processed_train.csv
+      md5: 2f28e0840fce5865747cba0b48c6594a
+      size: 81243
+  clean_features_test:
+    cmd: python -m src.features.clean_features data/interim/interim_test.csv data/processed/processed_test.csv
+    deps:
+    - path: data/interim/interim_test.csv
+      md5: 2a641f8b1bab75135403295d7063dd37
+      size: 557985
+    - path: src/features/clean_features.py
+      md5: 605694a3c6e1b74b91763187e50a9440
+      size: 1986
+    params:
+      params.json:
+        MEDIAN_SIZE: 13000000
+    outs:
+    - path: data/processed/processed_test.csv
+      md5: 96a7fb6813f90635024f0098a8b01006
+      size: 323654
+  train:
+    cmd: python -m src.models.train_model data/processed/processed_train.csv models/rforest.pkl
+    deps:
+    - path: data/processed/processed_train.csv
+      md5: 2f28e0840fce5865747cba0b48c6594a
+      size: 81243
+    - path: src/models/train_model.py
+      md5: d9d413cd77e05df2adcc6e12c0b6ba4c
+      size: 1167
+    params:
+      params.json:
+        MODEL_EXTENSION: .pkl
+        RANDOM_STATE: 12345
+        Y_COLUMN: Rating
+    outs:
+    - path: models/rforest.pkl
+      md5: c909117d9f6b18faf57619c38690d45a
+      size: 12420952
+  predict_test_data:
+    cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv
+    deps:
+    - path: data/processed/processed_test.csv
+      md5: 96a7fb6813f90635024f0098a8b01006
+      size: 323654
+    - path: models/rforest.pkl
+      md5: c909117d9f6b18faf57619c38690d45a
+      size: 12420952
+    - path: src/models/predict_model.py
+      md5: 29b6a5bb96c3491bf6f5ebf3397fe5b3
+      size: 1240
+    params:
+      params.json:
+        REPORT_PATH: reports/figures/
+        Y_COLUMN: Rating
