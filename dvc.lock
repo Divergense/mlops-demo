@@ -80,8 +80,8 @@ stages:
       md5: 9128bad869590d06051bc8ceeca55601
       size: 81243
     - path: src/models/train_model.py
-      md5: ab7c56357a1bfeea15503700fe192e29
-      size: 1853
+      md5: beae73f632f9a4eb1d2daf9784c3daaf
+      size: 2135
     params:
       params.json:
         MODEL_EXTENSION: .pkl
@@ -102,8 +102,8 @@ stages:
       md5: acec896b48fa325f8328d1da14eadd5c
       size: 12411992
     - path: src/models/evaluate_model.py
-      md5: 59bac7b4d58824b7334e11cd0804feba
-      size: 1993
+      md5: 6fb1f942539d4544cc82352052cbb066
+      size: 2275
     params:
       params.json:
         REPORT_PATH: reports/figures/
