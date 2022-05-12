@@ -51,10 +51,10 @@ stages:
       size: 1986
     params:
       params.json:
-        MEDIAN_SIZE: 13000000
+        MEDIAN_SIZE: 11000000
     outs:
     - path: data/processed/processed_train.csv
-      md5: 2f28e0840fce5865747cba0b48c6594a
+      md5: f736419828ae6852799bc50c7c3c0c4a
       size: 81243
   clean_features_test:
     cmd: python -m src.features.clean_features data/interim/interim_test.csv data/processed/processed_test.csv
@@ -67,16 +67,16 @@ stages:
       size: 1986
     params:
       params.json:
-        MEDIAN_SIZE: 13000000
+        MEDIAN_SIZE: 11000000
     outs:
     - path: data/processed/processed_test.csv
-      md5: 96a7fb6813f90635024f0098a8b01006
+      md5: 2bc2318dc9af4c861104d09f68ccd519
       size: 323654
   train:
     cmd: python -m src.models.train_model data/processed/processed_train.csv models/rforest.pkl
     deps:
     - path: data/processed/processed_train.csv
-      md5: 2f28e0840fce5865747cba0b48c6594a
+      md5: f736419828ae6852799bc50c7c3c0c4a
       size: 81243
     - path: src/models/train_model.py
       md5: d9d413cd77e05df2adcc6e12c0b6ba4c
@@ -88,18 +88,18 @@ stages:
         Y_COLUMN: Rating
     outs:
     - path: models/rforest.pkl
-      md5: c909117d9f6b18faf57619c38690d45a
-      size: 12420952
+      md5: 2df8163906556e66b2ea38e848e3a659
+      size: 12425432
   predict_test_data:
     cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv
       reports/metrics.json
     deps:
     - path: data/processed/processed_test.csv
-      md5: 96a7fb6813f90635024f0098a8b01006
+      md5: 2bc2318dc9af4c861104d09f68ccd519
       size: 323654
     - path: models/rforest.pkl
-      md5: c909117d9f6b18faf57619c38690d45a
-      size: 12420952
+      md5: 2df8163906556e66b2ea38e848e3a659
+      size: 12425432
     - path: src/models/predict_model.py
       md5: fae95d7269dbdda471154cc991b7d909
       size: 1764
@@ -109,5 +109,5 @@ stages:
         Y_COLUMN: Rating
     outs:
     - path: reports/metrics.json
-      md5: be2ff9e981e63dabd645f5c100f03437
-      size: 143
+      md5: 1cfef99d3e50f38b29e473fd09a09607
+      size: 141
