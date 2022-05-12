@@ -51,10 +51,11 @@ stages:
       size: 1986
     params:
       params.json:
-        MEDIAN_SIZE: 11000000
+        MEDIAN_SIZE: 12000000
+        RANDOM_STATE: 12345
     outs:
     - path: data/processed/processed_train.csv
-      md5: f736419828ae6852799bc50c7c3c0c4a
+      md5: cd06189b035b9abbc26b7e5f8c65634d
       size: 81243
   clean_features_test:
     cmd: python -m src.features.clean_features data/interim/interim_test.csv data/processed/processed_test.csv
@@ -67,20 +68,20 @@ stages:
       size: 1986
     params:
       params.json:
-        MEDIAN_SIZE: 11000000
+        MEDIAN_SIZE: 12000000
     outs:
     - path: data/processed/processed_test.csv
-      md5: 2bc2318dc9af4c861104d09f68ccd519
+      md5: 4906339dd3100e0b321507a588ad8963
       size: 323654
   train:
     cmd: python -m src.models.train_model data/processed/processed_train.csv models/rforest.pkl
     deps:
     - path: data/processed/processed_train.csv
-      md5: f736419828ae6852799bc50c7c3c0c4a
+      md5: cd06189b035b9abbc26b7e5f8c65634d
       size: 81243
     - path: src/models/train_model.py
-      md5: d9d413cd77e05df2adcc6e12c0b6ba4c
-      size: 1167
+      md5: ab7c56357a1bfeea15503700fe192e29
+      size: 1853
     params:
       params.json:
         MODEL_EXTENSION: .pkl
@@ -88,26 +89,26 @@ stages:
         Y_COLUMN: Rating
     outs:
     - path: models/rforest.pkl
-      md5: 2df8163906556e66b2ea38e848e3a659
-      size: 12425432
+      md5: a3de4e16a227db8aa30e716c70e8a401
+      size: 12429016
   predict_test_data:
-    cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv
+    cmd: python -m src.models.evaluate_model models/rforest.pkl data/processed/processed_test.csv
       reports/metrics.json
     deps:
     - path: data/processed/processed_test.csv
-      md5: 2bc2318dc9af4c861104d09f68ccd519
+      md5: 4906339dd3100e0b321507a588ad8963
       size: 323654
     - path: models/rforest.pkl
-      md5: 2df8163906556e66b2ea38e848e3a659
-      size: 12425432
-    - path: src/models/predict_model.py
-      md5: fae95d7269dbdda471154cc991b7d909
-      size: 1764
+      md5: a3de4e16a227db8aa30e716c70e8a401
+      size: 12429016
+    - path: src/models/evaluate_model.py
+      md5: 59bac7b4d58824b7334e11cd0804feba
+      size: 1993
     params:
       params.json:
         REPORT_PATH: reports/figures/
         Y_COLUMN: Rating
     outs:
     - path: reports/metrics.json
-      md5: 1cfef99d3e50f38b29e473fd09a09607
-      size: 141
+      md5: 56d6230359cddc1584214d9ac34989a1
+      size: 142

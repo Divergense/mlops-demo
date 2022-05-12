@@ -2,7 +2,7 @@
     "UNNECESSARY_COLUMNS": ["Last Updated", "Current Ver", "Android Ver", "App"],
     "RANDOM_STATE": 12345,
     "Y_COLUMN": "Rating",
-    "MEDIAN_SIZE": 11000000,
+    "MEDIAN_SIZE": 12000000,
     "MODEL_EXTENSION": ".pkl",
     "REPORT_PATH": "reports/figures/"
 }

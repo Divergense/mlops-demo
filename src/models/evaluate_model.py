@@ -1,6 +1,7 @@
 import json
 import click
 import pickle
+import mlflow
 import pandas as pd
 import seaborn as sns
 
@@ -15,11 +16,13 @@ from src.params_file import PARAMS_FILE
 from src.utility.processing import load_json_params
 
 
+mlflow.set_tag(key='ml stage', value='evaluate')
+
+
 @click.command()
 @click.argument("input_model", type=click.Path(exists=True))
 @click.argument("input_data", type=click.Path(exists=True))
 @click.argument("output_metrics", type=click.Path())
-# @click.argument('y_true', type=click.Path(exists=True), default='')
 def predict(input_model: str, input_data: str, output_metrics: str):
     params = load_json_params(PARAMS_FILE)
     Y_COLUMN = params['Y_COLUMN']
@@ -29,6 +32,10 @@ def predict(input_model: str, input_data: str, output_metrics: str):
     with open(input_model, "rb") as file:
         model = pickle.load(file)
         model_name = input_model.name
+
+    mlflow.log_params(model.get_params())
+    mlflow.log_params(params)
+    mlflow.sklearn.log_model(sk_model=model, artifact_path=str(input_model))
 
     df = pd.read_csv(input_data)
     y_true = df[Y_COLUMN]
@@ -41,6 +48,8 @@ def predict(input_model: str, input_data: str, output_metrics: str):
         r2_score=r2_score(y_true, y_pred)
     )
 
+    # set metrics that mlflow will be track
+    mlflow.log_metrics(scores)
     with open(output_metrics, 'w') as file:
         json.dump(scores, file, indent=4)
 

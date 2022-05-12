@@ -30,6 +30,7 @@ stages:
     params:
       - params.json:
         - MEDIAN_SIZE
+        - RANDOM_STATE
     outs:
       - data/processed/processed_train.csv
 
@@ -58,11 +59,11 @@ stages:
       - models/rforest.pkl
 
   predict_test_data:
-    cmd: python -m src.models.predict_model models/rforest.pkl data/processed/processed_test.csv reports/metrics.json
+    cmd: python -m src.models.evaluate_model models/rforest.pkl data/processed/processed_test.csv reports/metrics.json
     deps:
       - models/rforest.pkl
       - data/processed/processed_test.csv
-      - src/models/predict_model.py
+      - src/models/evaluate_model.py
     params:
       - params.json:
         - Y_COLUMN

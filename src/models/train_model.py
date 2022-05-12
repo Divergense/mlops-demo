@@ -1,12 +1,21 @@
 import click
 import pickle
+import mlflow
 import pandas as pd
 
 from pathlib import Path
 from sklearn.ensemble import RandomForestRegressor
 
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import median_absolute_error
+
 from src.params_file import PARAMS_FILE
 from src.utility.processing import load_json_params
+
+
+mlflow.set_tag(key='ml stage', value='train')
+# mlflow.set_experiment('Sklearn random forest regressor')
 
 
 @click.command()
@@ -30,6 +39,18 @@ def train(data: str, output_model: str):
 
     model = RandomForestRegressor(random_state=RANDOM_STATE)
     model.fit(x, y)
+    y_pred = model.predict(x)
+
+    mlflow.log_params(model.get_params())
+    mlflow.log_params(params)
+    mlflow.sklearn.log_model(sk_model=model, artifact_path=str(output_model))
+    mlflow.log_metrics(
+        dict(
+            mean_absolute_error=mean_absolute_error(y, y_pred),
+            median_absolute_error=median_absolute_error(y, y_pred),
+            r2_score=r2_score(y, y_pred)
+        )
+    )
 
     # output_model += MODEL_EXTENSION
     with open(output_model, "wb") as file:
