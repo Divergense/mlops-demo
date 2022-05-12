@@ -1,0 +1,15 @@
+artifact_uri: ./mlruns/0/4cea3dd171a244d6b896e44576e30994/artifacts
+end_time: 1652374013421
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 4cea3dd171a244d6b896e44576e30994
+run_uuid: 4cea3dd171a244d6b896e44576e30994
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1652374009264
+status: 3
+tags: []
+user_id: Raph
