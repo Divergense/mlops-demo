@@ -98,6 +98,12 @@ $ vim docker-compose.yaml
 *Note: docker-compose can use environment variables. For this it is necessary to have `.env` 
 file in the same directory of the `docker-compose.yaml`.*
 
+To check `docker-compose.yaml` file run:
+
+```
+$ docker-compose config
+```
+
 #### Minio
 
 To run standalone MinIO on Docker:
@@ -115,6 +121,10 @@ If call above command without setting root user and password then default user a
 *Note: variables `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` are equivalent to `MINIO_ACCESS_KEY` 
 and `MINIO_SECRET_KEY` correspondingly.*
 
+*Note: official documentation uses the following image of minio `quay.io/minio/minio` but starting 
+docker-compose results in  download two images related to the service:`quay.io/minio/minio` and 
+`minio/minio`. Probably sufficient condition of start the service is to use `minio/minio` image.*
+
 #### Nginx
 
 MinIO official documentation uses nginx server as proxy one. These configuration files are placed on: 
@@ -122,3 +132,5 @@ https://docs.min.io/docs/deploy-minio-on-docker-compose.
 
 Create `nginx.conf` file in `./Docker` directory and fill it with required settings (example can be found 
 on link mentioned previously).
+
+*Question: what `:ro` does mean in nginx volume forward `./Docker/nginx.conf:/etc/nginx/nginx.conf:ro`?*

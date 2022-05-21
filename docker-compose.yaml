@@ -4,7 +4,7 @@ services:
   minio:
     container_name: minio
     hostname: minio
-    image: quay.io/minio/minio:latest
+    image: minio/minio:latest
     command: server --console-address ":9001" /data/
     expose:
       - "9000"
@@ -36,15 +36,15 @@ services:
     depends_on:
       - minio
 
-  postgresql
-  pgadmin
-  mlflow
+  postgresql:
+  pgadmin:
+  mlflow:
 
 networks:
   postgres:
-    - bridge
+    driver: bridge
   s3:
-    - bridge
+    driver: bridge
 
 volumes:
   postgres:
