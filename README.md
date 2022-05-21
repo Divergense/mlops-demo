@@ -134,3 +134,5 @@ Create `nginx.conf` file in `./Docker` directory and fill it with required setti
 on link mentioned previously).
 
 *Question: what `:ro` does mean in nginx volume forward `./Docker/nginx.conf:/etc/nginx/nginx.conf:ro`?*
+
+#### PostgreSQL and PGadmin
