@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  minio:
+    container_name: minio
+    hostname: minio
+    image: quay.io/minio/minio:latest
+    command: server --console-address ":9001" /data/
+    expose:
+      - "9000"
+      - "9001"
+    networks:
+      - s3
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - ./Docker/minio/:/data
+
+  nginx:
+    image: nginx:1.19.2-alpine
+    container_name: nginx
+    hostname: nginx
+    volumes:
+      - ./Docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - s3
+    depends_on:
+      - minio
+
+  postgresql
+  pgadmin
+  mlflow
+
+networks:
+  postgres:
+    - bridge
+  s3:
+    - bridge
+
+volumes:
+  postgres:

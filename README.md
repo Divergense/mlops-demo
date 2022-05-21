@@ -55,3 +55,70 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+## Deploy MLflow tracking server of scenario number 4 in Docker
+
+### 1. Storing environment variables  
+
+These variables are stored in `.env` file but must be added to `.gitignore` for safety reasons and `.env.example` 
+is tracking under VCS. `.env.example` file stores only key of variables not values!
+
+### 2. Source docker files
+
+Create directory for example `Docker` under project root.
+
+```
+$ mkdir Docker
+```
+
+### 3. Services
+
+Core of the deployed app will correspond to MLflow tracking server of scenario 4:
+
+![](./reports/figures/scenario_4.png)
+
+Thus, the app will consist of the following services:
+
+- S3 storage (minio) host;
+- Nginx proxy server of S3 host for load balance;
+- MLflow tracking server;
+- PostgreSQL database;
+- PgAdmin server for  postgresql db.
+
+### 4. docker-compose.yaml
+
+This file will start all defined images that handle all defined services.
+
+Create `docker-compose.yaml` file and describe all services:
+
+```
+$ vim docker-compose.yaml
+```
+
+*Note: docker-compose can use environment variables. For this it is necessary to have `.env` 
+file in the same directory of the `docker-compose.yaml`.*
+
+#### Minio
+
+To run standalone MinIO on Docker:
+
+```
+$ docker run -p 9000:9000 -p 9001:9001 \
+  -e "MINIO_ROOT_USER=AKIAIOSFODNN7EXAMPLE" \
+  -e "MINIO_ROOT_PASSWORD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" \
+  quay.io/minio/minio server /data --console-address ":9001"
+```
+
+If call above command without setting root user and password then default user and password will be 
+`minioadmin:minioadmin` correspondingly.
+
+*Note: variables `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` are equivalent to `MINIO_ACCESS_KEY` 
+and `MINIO_SECRET_KEY` correspondingly.*
+
+#### Nginx
+
+MinIO official documentation uses nginx server as proxy one. These configuration files are placed on: 
+https://docs.min.io/docs/deploy-minio-on-docker-compose.
+
+Create `nginx.conf` file in `./Docker` directory and fill it with required settings (example can be found 
+on link mentioned previously).

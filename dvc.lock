@@ -51,11 +51,11 @@ stages:
       size: 1986
     params:
       params.json:
-        MEDIAN_SIZE: 11300000
+        MEDIAN_SIZE: 11500000
         RANDOM_STATE: 12345
     outs:
     - path: data/processed/processed_train.csv
-      md5: 9128bad869590d06051bc8ceeca55601
+      md5: 260762b260e7f3489c3e18c2ad499d47
       size: 81243
   clean_features_test:
     cmd: python -m src.features.clean_features data/interim/interim_test.csv data/processed/processed_test.csv
@@ -68,16 +68,16 @@ stages:
       size: 1986
     params:
       params.json:
-        MEDIAN_SIZE: 11300000
+        MEDIAN_SIZE: 11500000
     outs:
     - path: data/processed/processed_test.csv
-      md5: 76be1f929f74299136c3b40a36f7e741
+      md5: c84d901cbd9e71e87b9589b776f7e192
       size: 323654
   train:
     cmd: python -m src.models.train_model data/processed/processed_train.csv models/rforest.pkl
     deps:
     - path: data/processed/processed_train.csv
-      md5: 9128bad869590d06051bc8ceeca55601
+      md5: 260762b260e7f3489c3e18c2ad499d47
       size: 81243
     - path: src/models/train_model.py
       md5: beae73f632f9a4eb1d2daf9784c3daaf
@@ -89,17 +89,17 @@ stages:
         Y_COLUMN: Rating
     outs:
     - path: models/rforest.pkl
-      md5: acec896b48fa325f8328d1da14eadd5c
+      md5: 968dfff03541c269672bbefe7cbe6244
       size: 12411992
   predict_test_data:
     cmd: python -m src.models.evaluate_model models/rforest.pkl data/processed/processed_test.csv
       reports/metrics.json
     deps:
     - path: data/processed/processed_test.csv
-      md5: 76be1f929f74299136c3b40a36f7e741
+      md5: c84d901cbd9e71e87b9589b776f7e192
       size: 323654
     - path: models/rforest.pkl
-      md5: acec896b48fa325f8328d1da14eadd5c
+      md5: 968dfff03541c269672bbefe7cbe6244
       size: 12411992
     - path: src/models/evaluate_model.py
       md5: 6fb1f942539d4544cc82352052cbb066
@@ -110,5 +110,5 @@ stages:
         Y_COLUMN: Rating
     outs:
     - path: reports/metrics.json
-      md5: 4ba46ee00049447a17521773ccdd50f4
-      size: 142
+      md5: 2fda8b14b60f7530a07f141e53bb8eaa
+      size: 141
