@@ -106,7 +106,7 @@ $ docker-compose config
 
 #### Minio
 
-To run standalone MinIO on Docker:
+Command example of running standalone MinIO on Docker:
 
 ```
 $ docker run -p 9000:9000 -p 9001:9001 \
@@ -115,8 +115,11 @@ $ docker run -p 9000:9000 -p 9001:9001 \
   quay.io/minio/minio server /data --console-address ":9001"
 ```
 
-If call above command without setting root user and password then default user and password will be 
+If call above command without setting root user and root password then default user and password will be 
 `minioadmin:minioadmin` correspondingly.
+
+**Important:** After start minio service it is necessary to create s3 bucket with name equals to environment 
+variable `MINIO_S3_BUCKET`.
 
 *Note: variables `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` are equivalent to `MINIO_ACCESS_KEY` 
 and `MINIO_SECRET_KEY` correspondingly.*
@@ -131,8 +134,45 @@ MinIO official documentation uses nginx server as proxy one. These configuration
 https://docs.min.io/docs/deploy-minio-on-docker-compose.
 
 Create `nginx.conf` file in `./Docker` directory and fill it with required settings (example can be found 
-on link mentioned previously).
+on link mentioned above).
 
 *Question: what `:ro` does mean in nginx volume forward `./Docker/nginx.conf:/etc/nginx/nginx.conf:ro`?*
 
 #### PostgreSQL and PGadmin
+
+Configures can be seen in `docker-compose.yaml` it is pretty standard.
+
+1. **Important:** before start mounted host volume MUST belong to 5050 user id and the same group id.
+This id corresponds to pgadmin user/group somehow:
+
+    ```
+    $ mkdir ./Docker/pgadmin
+    $ sudo chown -R 5050:5050 ./Docker/pgadmin
+    ```
+
+2. After starting the containers need to add new server at PGadmin that is accessible on `127.0.0.1:5050` as 
+defined in `docker-compose.yaml`:
+
+    - set to `Host name/addres` field ip address of the postgresql database. To find out required ip 
+   first search for container id of postgresql service:
+    
+        ```
+        $ docker ps
+        ```
+      
+        Then use docker inspect command to list configuration of the container. Required ip address can be found 
+        at section `Networks`:
+    
+        ```
+        $ docker inspect 3c982a5b3e76
+        ```
+    - fields `Maintenance database`, `Username`, `Password` must equal to environment values of postgresql service:
+    `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` correspondingly.
+
+
+*Note: PGadmin can be proxied through Nginx as Minio also (see official documentation).*
+
+#### MLflow tracking server
+
+1. Create Dockerfile in `./Docker/mlflow_image/` that based on python 3.9 image and installs `mlflow`, `boto3` and 
+   `psycopg2` python packages. 

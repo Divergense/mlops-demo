@@ -67,6 +67,20 @@ services:
       - postgres
 
   mlflow:
+    restart: always
+    build: ./Docker/mlflow_image
+    container_name: mlflow_server
+    image: mflow_server
+    ports:
+      - "5000:5000"
+    networks:
+      - postgres
+      - s3
+    environment:
+      - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_KEY}
+      - MLFLOW_S3_ENDPOINT_URL=http://nginx:9000
+    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql/${POSTGRES_DB} --default-artifact-root s3://${MINIO_S3_BUCKET}/ --host 0.0.0.0
 
 networks:
   postgres:
