@@ -176,3 +176,6 @@ defined in `docker-compose.yaml`:
 
 1. Create Dockerfile in `./Docker/mlflow_image/` that based on python 3.9 image and installs `mlflow`, `boto3` and 
    `psycopg2` python packages. 
+
+2. Include in `docker-compose.yaml` command that build image from the Dockerfile.
+

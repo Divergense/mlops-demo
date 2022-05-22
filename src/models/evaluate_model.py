@@ -17,11 +17,8 @@ from src.params_file import PARAMS_FILE
 from src.utility.processing import load_json_params
 
 
-# bad decision - need to set it in console
-os.environ['MLFLOW_TRACKING_USERNAME'] = 'rkchelebiev'
-os.environ['MLFLOW_TRACKING_PASSWORD'] = 'd170e2430196df8c6d45714d14be8153a02e81d1'
-
-mlflow.set_tracking_uri('https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.mlflow')
+remote_server_uri = os.getenv('MLFLOW_TRACKING_URI')
+mlflow.set_tracking_uri(remote_server_uri)
 mlflow.set_tag(key='ml stage', value='evaluate')
 
 

@@ -15,13 +15,9 @@ from src.params_file import PARAMS_FILE
 from src.utility.processing import load_json_params
 
 
-# bad decision - need to set it in console
-os.environ['MLFLOW_TRACKING_USERNAME'] = 'rkchelebiev'
-os.environ['MLFLOW_TRACKING_PASSWORD'] = 'd170e2430196df8c6d45714d14be8153a02e81d1'
-
-mlflow.set_tracking_uri('https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.mlflow')
+remote_server_uri = os.getenv('MLFLOW_TRACKING_URI')
+mlflow.set_tracking_uri(remote_server_uri)
 mlflow.set_tag(key='ml stage', value='train')
-# mlflow.set_experiment('Sklearn random forest regressor')
 
 
 @click.command()
@@ -49,7 +45,7 @@ def train(data: str, output_model: str):
 
     mlflow.log_params(model.get_params())
     mlflow.log_params(params)
-    mlflow.sklearn.log_model(sk_model=model, artifact_path=str(output_model))
+    mlflow.sklearn.log_model(sk_model=model, artifact_path=str(output_model), registered_model_name=model)
     mlflow.log_metrics(
         dict(
             mean_absolute_error=mean_absolute_error(y, y_pred),
