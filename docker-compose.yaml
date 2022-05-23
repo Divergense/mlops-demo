@@ -82,6 +82,19 @@ services:
       - MLFLOW_S3_ENDPOINT_URL=http://nginx:9000
     command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql/${POSTGRES_DB} --default-artifact-root s3://${AWS_S3_BUCKET_NAME}/ --host 0.0.0.0
 
+  app:
+    restart: always
+    build: ./Docker/fastapi_model_service
+    container_name: fastapi_app
+    image: fastapi_app
+    ports:
+      - "8003:80"
+    networks:
+      - s3
+    enviroment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://nginx:9000
+
 networks:
   postgres:
     driver: bridge

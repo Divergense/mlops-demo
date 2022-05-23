@@ -179,3 +179,46 @@ defined in `docker-compose.yaml`:
 
 2. Include in `docker-compose.yaml` command that build image from the Dockerfile.
 
+*Note: MLflow obtains credentials to access S3 from `~/.aws/credentials` or environment variables 
+`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` depending on which of these are available.*
+
+### Built-in deployment MLflow models
+
+#### Local environment
+
+To run MLflow server for model serving type:
+
+```
+$ mlflow models serve --no-conda -m path_to_model -h 0.0.0.0 -p 8001
+```
+
+Argument `path_model` can be obtained from MLflow UI in field `Full Path` under specific experiment.
+
+**Important:** before run the server it is needed to set environment variables `AWS_ACCESS_KEY_ID`, 
+`AWS_SECRET_ACCESS_KEY`, `AWS_S3_BUCKET_NAME` to proper values:
+
+```
+$ export AWS_ACCESS_KEY_ID=minioadmin
+$ export AWS_SECRET_ACCESS_KEY=minioadmin
+$ export AWS_S3_BUCKET_NAME=app-ratings
+```
+
+While the sever deployed it is possible send POST request on `http://127.0.0.1:8001/invocations` with 
+JSON body that has `"columns"` and `"data"` properties and corresponding values in array format. 
+
+#### Docker environment
+
+```
+$ mlflow models build-docker -m path_to_model -n image_name
+$ docker run image_name -p p_out:p_in
+```
+
+### External tools for deployment MLflow models
+
+#### FastAPI
+
+1. Create Dockefile in `Docker/fastapi_model_service`.
+
+2. Create directory `app` in `./src`. Place application code in this directory.
+
+3. Include the application in `docker-compose.yaml`.

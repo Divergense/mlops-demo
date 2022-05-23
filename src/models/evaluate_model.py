@@ -43,14 +43,14 @@ def predict(input_model: str, input_data: str, output_metrics: str):
     y_true = df[Y_COLUMN]
     x = df.drop(labels=[Y_COLUMN], axis=1)
 
-    y_pred = model.predict(x)
-    scores = dict(
-        mean_absolute_error=mean_absolute_error(y_true, y_pred),
-        median_absolute_error=median_absolute_error(y_true, y_pred),
-        r2_score=r2_score(y_true, y_pred)
-    )
-
     with mlflow.start_run():
+        y_pred = model.predict(x)
+        scores = dict(
+            mean_absolute_error=mean_absolute_error(y_true, y_pred),
+            median_absolute_error=median_absolute_error(y_true, y_pred),
+            r2_score=r2_score(y_true, y_pred)
+        )
+
         mlflow.set_experiment(MODEL_NAME)
         mlflow.set_tag(key='ml stage', value='evaluate')
 
