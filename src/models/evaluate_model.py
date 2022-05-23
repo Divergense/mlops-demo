@@ -24,8 +24,6 @@ MODEL_NAME = PARAMS['MODEL_NAME']
 
 load_dotenv()
 mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URI'))
-mlflow.set_experiment(MODEL_NAME)
-mlflow.set_tag(key='ml stage', value='evaluate')
 
 
 @click.command()
@@ -52,9 +50,13 @@ def predict(input_model: str, input_data: str, output_metrics: str):
         r2_score=r2_score(y_true, y_pred)
     )
 
-    mlflow.log_params(model.get_params())
-    mlflow.log_params(PARAMS)
-    mlflow.log_metrics(scores)
+    with mlflow.start_run():
+        mlflow.set_experiment(MODEL_NAME)
+        mlflow.set_tag(key='ml stage', value='evaluate')
+
+        mlflow.log_params(model.get_params())
+        mlflow.log_params(PARAMS)
+        mlflow.log_metrics(scores)
 
     with open(output_metrics, 'w') as file:
         json.dump(scores, file, indent=4)
