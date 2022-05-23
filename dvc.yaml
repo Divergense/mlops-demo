@@ -52,9 +52,12 @@ stages:
       - src/models/train_model.py
     params:
       - params.json:
+        - MODEL_NAME
         - RANDOM_STATE
         - Y_COLUMN
         - MODEL_EXTENSION
+        - MEDIAN_SIZE
+        - ARTIFACT_PATH
     outs:
       - models/rforest.pkl
 
@@ -66,6 +69,7 @@ stages:
       - src/models/evaluate_model.py
     params:
       - params.json:
+        - MODEL_NAME
         - Y_COLUMN
         - REPORT_PATH
     metrics:

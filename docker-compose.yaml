@@ -12,8 +12,8 @@ services:
     networks:
       - s3
     environment:
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
@@ -77,10 +77,10 @@ services:
       - postgres
       - s3
     environment:
-      - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY}
-      - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - MLFLOW_S3_ENDPOINT_URL=http://nginx:9000
-    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql/${POSTGRES_DB} --default-artifact-root s3://${MINIO_S3_BUCKET}/ --host 0.0.0.0
+    command: mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql/${POSTGRES_DB} --default-artifact-root s3://${AWS_S3_BUCKET_NAME}/ --host 0.0.0.0
 
 networks:
   postgres:

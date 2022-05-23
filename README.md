@@ -122,7 +122,7 @@ If call above command without setting root user and root password then default u
 variable `MINIO_S3_BUCKET`.
 
 *Note: variables `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` are equivalent to `MINIO_ACCESS_KEY` 
-and `MINIO_SECRET_KEY` correspondingly.*
+and `MINIO_SECRET_KEY` correspondingly. MinIO warning recommend to use first variant.*
 
 *Note: official documentation uses the following image of minio `quay.io/minio/minio` but starting 
 docker-compose results in  download two images related to the service:`quay.io/minio/minio` and 

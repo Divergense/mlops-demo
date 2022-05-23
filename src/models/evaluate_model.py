@@ -7,6 +7,7 @@ import pandas as pd
 import seaborn as sns
 
 from pathlib import Path
+from dotenv import load_dotenv
 from matplotlib import pyplot as plt
 
 from sklearn.metrics import r2_score
@@ -17,8 +18,13 @@ from src.params_file import PARAMS_FILE
 from src.utility.processing import load_json_params
 
 
-remote_server_uri = os.getenv('MLFLOW_TRACKING_URI')
-mlflow.set_tracking_uri(remote_server_uri)
+PARAMS = load_json_params(PARAMS_FILE)
+MODEL_NAME = PARAMS['MODEL_NAME']
+
+
+load_dotenv()
+mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URI'))
+mlflow.set_experiment(MODEL_NAME)
 mlflow.set_tag(key='ml stage', value='evaluate')
 
 
@@ -27,18 +33,13 @@ mlflow.set_tag(key='ml stage', value='evaluate')
 @click.argument("input_data", type=click.Path(exists=True))
 @click.argument("output_metrics", type=click.Path())
 def predict(input_model: str, input_data: str, output_metrics: str):
-    params = load_json_params(PARAMS_FILE)
-    Y_COLUMN = params['Y_COLUMN']
-    REPORT_PATH = Path(params['REPORT_PATH'])
+    Y_COLUMN = PARAMS['Y_COLUMN']
+    REPORT_PATH = Path(PARAMS['REPORT_PATH'])
 
     input_model = Path(input_model)
     with open(input_model, "rb") as file:
         model = pickle.load(file)
         model_name = input_model.name
-
-    mlflow.log_params(model.get_params())
-    mlflow.log_params(params)
-    mlflow.sklearn.log_model(sk_model=model, artifact_path=str(input_model))
 
     df = pd.read_csv(input_data)
     y_true = df[Y_COLUMN]
@@ -51,8 +52,10 @@ def predict(input_model: str, input_data: str, output_metrics: str):
         r2_score=r2_score(y_true, y_pred)
     )
 
-    # set metrics that mlflow will be track
+    mlflow.log_params(model.get_params())
+    mlflow.log_params(PARAMS)
     mlflow.log_metrics(scores)
+
     with open(output_metrics, 'w') as file:
         json.dump(scores, file, indent=4)
 
