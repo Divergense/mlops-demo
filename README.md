@@ -122,7 +122,7 @@ If call above command without setting root user and root password then default u
 variable `MINIO_S3_BUCKET`.
 
 *Note: variables `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` are equivalent to `MINIO_ACCESS_KEY` 
-and `MINIO_SECRET_KEY` correspondingly. MinIO warning recommend to use first variant.*
+and `MINIO_SECRET_KEY` correspondingly. MinIO warning recommends to use first variant.*
 
 *Note: official documentation uses the following image of minio `quay.io/minio/minio` but starting 
 docker-compose results in  download two images related to the service:`quay.io/minio/minio` and 
@@ -219,6 +219,21 @@ $ docker run image_name -p p_out:p_in
 
 1. Create Dockefile in `Docker/fastapi_model_service`.
 
-2. Create directory `app` in `./src`. Place application code in this directory.
+2. Create directory `app` in `./Docker/fastapi_model_service`. Place application code in this directory.
 
-3. Include the application in `docker-compose.yaml`.
+*Note: docker is not able to copy files from outside of Dockerfile directory.*
+
+4. Include the application in `docker-compose.yaml`.
+
+### General concepts of deployment
+
+Some of the important concepts are:
+
+- Security - HTTPS
+- Running on startup
+- Restarts
+- Replication (the number of processes running)
+- Memory
+- Previous steps before starting
+
+For details read <https://fastapi.tiangolo.com/deployment/concepts/>

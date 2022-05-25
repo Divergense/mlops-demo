@@ -1,15 +1,23 @@
+FROM python:3.9 as requirements-stage
+
+WORKDIR /tmp
+
+RUN pip install poetry
+
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+
 FROM python:3.9
 
 WORKDIR /code
 
-RUN pip install --upgrade pip
-RUN pip install poetry
+COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
 
-COPY ../../pyproject.toml ../../poetry.lock ./
-COPY ../../.env ./app/.env
-COPY ../../src/app ./app
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+# RUN poetry config virtualenvs.create false && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
-RUN poetry config virtualenvs.create false \
-  && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
+COPY ./app /code/app
 
 CMD ["uvicorn", "app.inference:app", "--host", "0.0.0.0", "--port", "80"]

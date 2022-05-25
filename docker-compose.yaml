@@ -91,7 +91,7 @@ services:
       - "8003:80"
     networks:
       - s3
-    enviroment:
+    environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - MLFLOW_S3_ENDPOINT_URL=http://nginx:9000
 

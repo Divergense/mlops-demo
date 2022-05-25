@@ -4,7 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
 
-from src.app.model import Model
+from model import Model
 
 
 load_dotenv()
