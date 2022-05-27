@@ -19,5 +19,6 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 # RUN poetry config virtualenvs.create false && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
 COPY ./app /code/app
+COPY ./.env /code/
 
 CMD ["uvicorn", "app.inference:app", "--host", "0.0.0.0", "--port", "80"]
