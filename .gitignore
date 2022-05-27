@@ -92,6 +92,8 @@ data/processed/
 
 # Snakemake
 .snakemake/
+.snakemake/metadata
 
 # MLflow
 # mlruns/
+artifacts/
