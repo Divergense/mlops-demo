@@ -1,0 +1,20 @@
+# Environment variables go here, can be read by `python-dotenv` package
+# Before start docker-compose make copy of this file with new name .env and then fill up this variables!
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_S3_BUCKET_NAME=
+
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+PGDATA=
+
+PGADMIN_DEFAULT_EMAIL=
+PGADMIN_DEFAULT_PASSWORD=
+
+MLFLOW_S3_ENDPOINT_URL=
+MLFLOW_TRACKING_URI=
+
+SERVICE_MODEL_NAME=
+MODEL_STAGE=
