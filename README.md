@@ -1,7 +1,26 @@
-hw_cookiecutter
+Google Store App rating prediction
 ==============================
 
-google store app rating prediction
+TODO:
+
+- after cloning repo raw files don't exist
+
+- include raw files in minio?
+
+- before run services need to dvc repro since it creates models for fastapi_model_service
+
+- 'fastapi_model_service' uses '.env', 'pyproject.toml' and 'poetry.lock' files - that is no DRY
+
+- how to create necessary bucket, pgadmin connection before start these services?
+
+- grant required permissions to `pgadmin` directory before start that service
+
+- add checking model exists when fastapi_model_service starts
+
+- need https support
+
+- load balancers for all services
+
 
 Project Organization
 ------------
@@ -56,7 +75,17 @@ Project Organization
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
-## Deploy MLflow tracking server of scenario number 4 in Docker
+## Machine learning core of the project
+
+
+
+## MLOps approaches
+
+
+
+## Project deployment
+
+Deploy MLflow tracking server of scenario number 4 in Docker
 
 ### 1. Storing environment variables  
 
@@ -104,7 +133,7 @@ To check `docker-compose.yaml` file run:
 $ docker-compose config
 ```
 
-#### Minio
+### 5. Minio
 
 Command example of running standalone MinIO on Docker:
 
@@ -128,7 +157,7 @@ and `MINIO_SECRET_KEY` correspondingly. MinIO warning recommends to use first va
 docker-compose results in  download two images related to the service:`quay.io/minio/minio` and 
 `minio/minio`. Probably sufficient condition of start the service is to use `minio/minio` image.*
 
-#### Nginx
+### 6. Nginx
 
 MinIO official documentation uses nginx server as proxy one. These configuration files are placed on: 
 https://docs.min.io/docs/deploy-minio-on-docker-compose.
@@ -138,7 +167,7 @@ on link mentioned above).
 
 *Question: what `:ro` does mean in nginx volume forward `./Docker/nginx.conf:/etc/nginx/nginx.conf:ro`?*
 
-#### PostgreSQL and PGadmin
+### 7. PostgreSQL and PGadmin
 
 Configures can be seen in `docker-compose.yaml` it is pretty standard.
 
@@ -172,7 +201,7 @@ defined in `docker-compose.yaml`:
 
 *Note: PGadmin can be proxied through Nginx as Minio also (see official documentation).*
 
-#### MLflow tracking server
+### 8. MLflow tracking server
 
 1. Create Dockerfile in `./Docker/mlflow_image/` that based on python 3.9 image and installs `mlflow`, `boto3` and 
    `psycopg2` python packages. 
@@ -182,7 +211,7 @@ defined in `docker-compose.yaml`:
 *Note: MLflow obtains credentials to access S3 from `~/.aws/credentials` or environment variables 
 `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` depending on which of these are available.*
 
-### Built-in deployment MLflow models
+### 9. Built-in deployment MLflow models
 
 #### Local environment
 
@@ -213,7 +242,7 @@ $ mlflow models build-docker -m path_to_model -n image_name
 $ docker run image_name -p p_out:p_in
 ```
 
-### External tools for deployment MLflow models
+### 10. External tools for deployment MLflow models
 
 #### FastAPI
 
@@ -225,9 +254,9 @@ $ docker run image_name -p p_out:p_in
 
 4. Include the application in `docker-compose.yaml`.
 
-### General concepts of deployment
+### 11. General concepts of deployment
 
-Some of the important concepts are:
+Some important concepts are:
 
 - Security - HTTPS
 - Running on startup
@@ -237,3 +266,36 @@ Some of the important concepts are:
 - Previous steps before starting
 
 For details read <https://fastapi.tiangolo.com/deployment/concepts/>
+
+
+### 12. Ways to solve some deployment problems
+
+#### Init raw files
+
+Configure gdrive remote storage:
+
+1. Create folder in gdrive and cd into it.
+2. Copy last part of uri.
+3. Add remote storage:
+    ```
+   $ dvc remote add -d gdrive://copied-last-part-uri
+    ```
+4. Push data to remote storage:
+    ```
+   $ dvc push
+    ```
+5. Follow dvc instructions: go to proposed url and give access rights to dvc.
+
+#### Init minio
+
+Use minio API available on python, js, java, go. It has method that can create buckets.
+
+#### Init pgadmin
+
+1. For pre configuration see <https://stackoverflow.com/questions/64620446/adding-postgress-connections-to-pgadmin-in-docker-file>.
+
+2. Before start the service it is need bash script that sets required permissions to `pgadmin` volume.
+
+#### Init fastapi service
+
+pass
