@@ -80,11 +80,14 @@ stages:
       md5: 260762b260e7f3489c3e18c2ad499d47
       size: 81243
     - path: src/models/train_model.py
-      md5: beae73f632f9a4eb1d2daf9784c3daaf
-      size: 2135
+      md5: 88c4f5e95e17a1134ab06630c98ad499
+      size: 2722
     params:
       params.json:
+        ARTIFACT_PATH: model
+        MEDIAN_SIZE: 11500000
         MODEL_EXTENSION: .pkl
+        MODEL_NAME: Random Forest Regressor
         RANDOM_STATE: 12345
         Y_COLUMN: Rating
     outs:
@@ -102,10 +105,11 @@ stages:
       md5: 968dfff03541c269672bbefe7cbe6244
       size: 12411992
     - path: src/models/evaluate_model.py
-      md5: 6fb1f942539d4544cc82352052cbb066
-      size: 2275
+      md5: 59c25d2466d61281003b08d1015be6c0
+      size: 2376
     params:
       params.json:
+        MODEL_NAME: Random Forest Regressor
         REPORT_PATH: reports/figures/
         Y_COLUMN: Rating
     outs:

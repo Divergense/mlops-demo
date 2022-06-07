@@ -23,6 +23,8 @@ TODO:
 
 - arguments of python package are not in configuration file that results in dvc and test duplicate code
 
+- testing the service requires deployment all services before it
+
 
 Project Organization
 ------------

@@ -21,10 +21,15 @@ PARAMS = load_json_params(PARAMS_FILE)
 MODEL_NAME=PARAMS['MODEL_NAME']
 ARTIFACT_PATH = PARAMS['ARTIFACT_PATH']
 
-
+"""
 load_dotenv()
 mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URI'))
 experiment_id = mlflow.create_experiment(MODEL_NAME)
+"""
+
+os.environ['MLFLOW_TRACKING_USERNAME'] = 'rkchelebiev'
+os.environ['MLFLOW_TRACKING_PASSWORD'] = 'd170e2430196df8c6d45714d14be8153a02e81d1'
+mlflow.set_tracking_uri('https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.mlflow')
 
 
 @click.command()
