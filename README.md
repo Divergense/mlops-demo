@@ -21,6 +21,8 @@ TODO:
 
 - load balancers for all services
 
+- arguments of python package are not in configuration file that results in dvc and test duplicate code
+
 
 Project Organization
 ------------
@@ -75,12 +77,27 @@ Project Organization
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
+
 ## Machine learning core of the project
 
+постановка задачи
+описание данных
+результаты анализа и обработки данных
+результаты feature engineering
+используемые методы оптимизации
+метрики качества
 
 
 ## MLOps approaches
 
+система контроля версий
+инструменты контроля codestyle
+шаблон проекта / шаблонизаторы
+инструменты шаблонизации структуры проекта
+workflow менеджеры
+инструменты трекинга экспериментов
+методы и инструменты тестирования
+описание CI пайплайна
 
 
 ## Project deployment
@@ -268,7 +285,7 @@ Some important concepts are:
 For details read <https://fastapi.tiangolo.com/deployment/concepts/>
 
 
-### 12. Ways to solve some deployment problems
+## Deployment issues and possible solutions
 
 #### Init raw files
 

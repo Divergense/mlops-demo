@@ -55,7 +55,7 @@ def train(data: str, output_model: str):
 
         mlflow.log_params(model.get_params())
         mlflow.log_params(PARAMS)
-        # artifact_path is path deep inside S3 bucket store
+        # artifact_path is path points deep inside S3 bucket store
         mlflow.sklearn.log_model(sk_model=model,
                                  artifact_path=ARTIFACT_PATH,
                                  registered_model_name=MODEL_NAME,
