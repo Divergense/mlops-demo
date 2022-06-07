@@ -1,6 +1,4 @@
 [core]
-    remote = gstorage
+    remote = origin
 ['remote "origin"']
     url = https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.dvc
-['remote "gstorage"']
-    url = gdrive://1YUVK3gB9GTi7KF0yITu99sh3VyX4iIE2
