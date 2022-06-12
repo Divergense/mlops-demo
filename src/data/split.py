@@ -18,7 +18,7 @@ def split(input: str, output: str, test_size: float = 0.8):
         output -
     """
     params = load_json_params(PARAMS_FILE)
-    RANDOM_STATE = params['RANDOM_STATE']
+    RANDOM_STATE = params["RANDOM_STATE"]
 
     def process(df):
         df_train, df_test = train_test_split(
