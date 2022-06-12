@@ -39,8 +39,12 @@ stat-tests:
 g-tests:
   stage: general-test
   only:
-    - main
+    - tests
   script:
+    - python --version
+    - pip install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install --no-root
     - poetry run dvc pull
     - poetry run dvc repro
     - poetry run pytest --disable-warnings
