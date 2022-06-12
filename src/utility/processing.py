@@ -41,13 +41,9 @@ def str_to_int(value: str):
         return value
     DIGITS = list(map(str, range(10)))
     if "m" == value[-1].lower():
-        x = value[:-1]
-        x = float(x) * 1000000
-        return x
+        return float(value[:-1]) * 1000000
     elif "k" == value[-1].lower():
-        x = value[:-1]
-        x = float(x) * 1000
-        return x
+        return float(value[:-1]) * 1000
     elif value[-1] in DIGITS:
         return float(value)
     else:

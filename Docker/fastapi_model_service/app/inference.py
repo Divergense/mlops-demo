@@ -35,6 +35,7 @@ async def upload_file(file: UploadFile = File(...)):
 
 if os.getenv("AWS_ACCESS_KEY_ID") is None or os.getenv("AWS_SECRET_ACCESS_KEY") is None:
     print(
-        "Environment variables is not set. Check 'AWS_ACCESS_KEY_ID' and 'AWS_SECRET_ACCESS_KEY'"
+        "Environment variables is not set. Check 'AWS_ACCESS_KEY_ID' and"
+        " 'AWS_SECRET_ACCESS_KEY'"
     )
     os.exit(1)

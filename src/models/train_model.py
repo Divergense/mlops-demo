@@ -40,11 +40,11 @@ def train(data: str, output_model: str):
     Y_COLUMN = PARAMS["Y_COLUMN"]
     MODEL_EXTENSION = PARAMS["MODEL_EXTENSION"]
 
-    output_model = Path(output_model)
-    model_name = output_model.suffix
-    if not model_name:
-        output_model = output_model.parent
-        output_model.joinpath(model_name + MODEL_EXTENSION)
+    output_model_path = Path(output_model)
+    # model_name = output_model.suffix
+    # if not model_name:
+    #     output_model = output_model.parent
+    #     output_model.joinpath(model_name + MODEL_EXTENSION)
 
     df = pd.read_csv(data)
     y = df[Y_COLUMN]
@@ -76,7 +76,7 @@ def train(data: str, output_model: str):
         )
 
     # output_model += MODEL_EXTENSION
-    with open(output_model, "wb") as file:
+    with open(output_model_path, "wb") as file:
         pickle.dump(model, file)
         print(f"Model {output_model} has been saved")
 
