@@ -14,7 +14,7 @@ def drop_columns(input: str, output: str, columns: Tuple[str] = None):
     if len(columns) == 0:
         print(PARAMS_FILE)
         params = load_json_params(PARAMS_FILE)
-        columns = params['UNNECESSARY_COLUMNS']
+        columns = params["UNNECESSARY_COLUMNS"]
     else:
         columns = list(columns)
 

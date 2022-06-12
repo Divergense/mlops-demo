@@ -11,7 +11,7 @@ from src.utility.wrappers import read_process_write
 @click.argument("output", type=click.Path())
 def clean_features(input: str, output: str):
     params = load_json_params(PARAMS_FILE)
-    MEDIAN_SIZE = params['MEDIAN_SIZE']
+    MEDIAN_SIZE = params["MEDIAN_SIZE"]
 
     def process(df):
         # transform Categories into integers

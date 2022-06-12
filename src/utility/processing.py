@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def load_json_params(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         params = json.load(file)
     return params
 

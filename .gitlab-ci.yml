@@ -1,3 +1,7 @@
+stages:
+  - static-test
+  - general-test
+
 image: python:3.8
 
 # Change pip's cache directory to be inside the project directory since we can
@@ -17,13 +21,25 @@ cache:
     - .cache/pip
     - .venv/
 
-before_script:
-  - python --version
-  - pip install poetry
-  - poetry config virtualenvs.in-project true
-  - poetry install --no-root
+#before_script:
+#  - python --version
+#  - pip install poetry
+#  - poetry config virtualenvs.in-project true
+#  - poetry install --no-root
 
-pytest:
+stat-tests:
+  stage: static-test
+  script:
+    - pip install flake8 mypy
+    - flake8 ${MLOPS_CODE_PATH}
+    - flake8 ${FASTAPI_CODE_PATH}
+    - mypy --ignore-missing-imports ${MLOPS_CODE_PATH}
+    - mypy --ignore-missing-imports ${FASTAPI_CODE_PATH}
+
+g-tests:
+  stage: general-test
+  only:
+    - main
   script:
     - poetry run dvc pull
     - poetry run dvc repro

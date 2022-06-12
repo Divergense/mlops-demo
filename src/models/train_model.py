@@ -18,8 +18,8 @@ from src.utility.processing import load_json_params
 
 
 PARAMS = load_json_params(PARAMS_FILE)
-MODEL_NAME=PARAMS['MODEL_NAME']
-ARTIFACT_PATH = PARAMS['ARTIFACT_PATH']
+MODEL_NAME = PARAMS["MODEL_NAME"]
+ARTIFACT_PATH = PARAMS["ARTIFACT_PATH"]
 
 """
 load_dotenv()
@@ -27,18 +27,18 @@ mlflow.set_tracking_uri(os.getenv('MLFLOW_TRACKING_URI'))
 experiment_id = mlflow.create_experiment(MODEL_NAME)
 """
 
-os.environ['MLFLOW_TRACKING_USERNAME'] = 'rkchelebiev'
-os.environ['MLFLOW_TRACKING_PASSWORD'] = 'd170e2430196df8c6d45714d14be8153a02e81d1'
-mlflow.set_tracking_uri('https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.mlflow')
+os.environ["MLFLOW_TRACKING_USERNAME"] = "rkchelebiev"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "d170e2430196df8c6d45714d14be8153a02e81d1"
+mlflow.set_tracking_uri("https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.mlflow")
 
 
 @click.command()
 @click.argument("data", type=click.Path(exists=True))
 @click.argument("output_model", type=click.Path())
 def train(data: str, output_model: str):
-    RANDOM_STATE = PARAMS['RANDOM_STATE']
-    Y_COLUMN = PARAMS['Y_COLUMN']
-    MODEL_EXTENSION = PARAMS['MODEL_EXTENSION']
+    RANDOM_STATE = PARAMS["RANDOM_STATE"]
+    Y_COLUMN = PARAMS["Y_COLUMN"]
+    MODEL_EXTENSION = PARAMS["MODEL_EXTENSION"]
 
     output_model = Path(output_model)
     model_name = output_model.suffix
@@ -51,7 +51,7 @@ def train(data: str, output_model: str):
     x = df.drop(Y_COLUMN, axis=1)
 
     with mlflow.start_run():
-        mlflow.set_tag(key='ml stage', value='train')
+        mlflow.set_tag(key="ml stage", value="train")
 
         model = RandomForestRegressor(random_state=RANDOM_STATE)
         model.fit(x, y)
@@ -61,16 +61,17 @@ def train(data: str, output_model: str):
         mlflow.log_params(model.get_params())
         mlflow.log_params(PARAMS)
         # artifact_path is path points deep inside S3 bucket store
-        mlflow.sklearn.log_model(sk_model=model,
-                                 artifact_path=ARTIFACT_PATH,
-                                 registered_model_name=MODEL_NAME,
-                                 signature=signature
-                                 )
+        mlflow.sklearn.log_model(
+            sk_model=model,
+            artifact_path=ARTIFACT_PATH,
+            registered_model_name=MODEL_NAME,
+            signature=signature,
+        )
         mlflow.log_metrics(
             dict(
                 mean_absolute_error=mean_absolute_error(y, y_pred),
                 median_absolute_error=median_absolute_error(y, y_pred),
-                r2_score=r2_score(y, y_pred)
+                r2_score=r2_score(y, y_pred),
             )
         )
 
