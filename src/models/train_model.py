@@ -5,7 +5,7 @@ import mlflow
 import pandas as pd
 
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # noqa
 from mlflow.models.signature import infer_signature
 
 from sklearn.metrics import r2_score
