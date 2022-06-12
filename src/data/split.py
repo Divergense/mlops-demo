@@ -1,4 +1,5 @@
 import click
+from typing import Tuple
 from sklearn.model_selection import train_test_split
 
 from src.params_file import PARAMS_FILE
@@ -10,7 +11,7 @@ from src.utility.wrappers import read_process_write
 @click.argument("input", type=click.Path(exists=True))
 @click.argument("output", nargs=2, type=click.Path())
 @click.option("--test_size", "-t", type=click.FLOAT, default=0.8)
-def split(input: str, output: str, test_size: float = 0.8):
+def split(input: str, output: Tuple[str], test_size: float = 0.8):
     """
     Split input dataframe into 2 subsets.
     Args:

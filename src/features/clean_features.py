@@ -40,7 +40,7 @@ def clean_features(input: str, output: str):
         df.dropna(inplace=True)
         return [df]
 
-    read_process_write(process, input=input, output=[output])
+    read_process_write(process, input=input, output=(output,))
 
 
 if __name__ == "__main__":

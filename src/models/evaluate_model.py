@@ -39,10 +39,10 @@ def predict(input_model: str, input_data: str, output_metrics: str):
     Y_COLUMN = PARAMS["Y_COLUMN"]
     REPORT_PATH = Path(PARAMS["REPORT_PATH"])
 
-    input_model = Path(input_model)
-    with open(input_model, "rb") as file:
+    input_model_path = Path(input_model)
+    with open(input_model_path, "rb") as file:
         model = pickle.load(file)
-        model_name = input_model.name
+        model_name = input_model_path.name
 
     df = pd.read_csv(input_data)
     y_true = df[Y_COLUMN]
