@@ -38,7 +38,7 @@ mlflow.set_tracking_uri("https://dagshub.com/rkchelebiev/mlops-dvc-mlflow.mlflow
 def train(data: str, output_model: str):
     RANDOM_STATE = PARAMS["RANDOM_STATE"]
     Y_COLUMN = PARAMS["Y_COLUMN"]
-    MODEL_EXTENSION = PARAMS["MODEL_EXTENSION"]
+    MODEL_EXTENSION = PARAMS["MODEL_EXTENSION"]  # noqa
 
     output_model_path = Path(output_model)
     # model_name = output_model.suffix
