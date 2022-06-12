@@ -3,34 +3,76 @@ Google Store App rating prediction
 
 TODO:
 
-- after cloning repo raw files don't exist
-
-- include raw files in minio?
-
-- before run services need to dvc repro since it creates models for fastapi_model_service
-
-- 'fastapi_model_service' uses '.env', 'pyproject.toml' and 'poetry.lock' files - that is no DRY
-
-- how to create necessary bucket, pgadmin connection before start these services?
-
-- grant required permissions to `pgadmin` directory before start that service
-
-- add checking model exists when fastapi_model_service starts
-
-- need https support
-
-- load balancers for all services
-
-- arguments of python package are not in configuration file that results in dvc and test duplicate code
-
-- testing the service requires deployment all services before it
+- gitlab-cd
 
 
-Project Organization
+## Machine learning core of the project
+
+The goal of the ml project part is to predict google play store application rating.
+
+The dataset was build from web scraped data of 10k Play Store apps for analysing the Android market.
+The dataset consists of 2 files `googleplaystore.csv` and `googleplaystore_user_reviews.csv`.
+This project uses only one file - `googleplaystore.csv` as general goal of the project is MLOps not ML.
+
+For details see original page of the dataset: <https://www.kaggle.com/datasets/lava18/google-play-store-apps>.
+
+Some columns are unnecessary and was dropped: `"Last Updated", "Current Ver", "Android Ver", "App"`.
+
+Some columns have 'mixed' format also. For example `Installs` column describes number of installs with two 
+formats: `number{K|M}` or plain integer `number`. All columns with format like this was converted to integers.
+
+Data contains also missing values. App with missing `Rating` value was just dropped. Other column values was 
+replaced: for example values of column `Size` (size of app in megabytes) replaced with median size of all apps.
+
+Rating prediction is considered as regression task. For solving the task was chosen random forest regressor algorithm.
+For algorithm evaluation are used the following metrics: r2 score, mean absolute error and median absolute error.
+
+After training the ML model the project scripts generate and save histogram of residuals between predicted and actual 
+ratings in png format.
+
+
+## MLOps approaches
+
+система контроля версий
+### Source version control system
+
+For control source code versions is used Git with self-hosted Gitlab on remote server under Docker.
+On the same server was deployed Gitlab Runner in Docker also.
+
+See following image for resulting usage of the system:
+
+![](./reports/figures/git_history.png)
+
+### Codestyle control tools
+
+Black python package is used for automated code formatting.
+
+In addition, mypy and flake8 python packages was integrated in gitlab CI.
+
+Mypy is a python package for type checking, flake8 checks code for corresponding code formatting.
+
+By default, black setting differs from flake8 one. To avoid conflicts (maximum length of the line) flake8 
+was setting up to black settings in `tox.ini` file.
+
+### Project template tool
+
+For creating a logical, reasonably standardized, but flexible project structure was chosen 
+Cookiecutter Data Science. The project based on the 
+<a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter 
+data science project template</a>.
+
+All that it's need install cookiecutter via pip and call:
+
+```
+cookiecutter -c v1 https://github.com/drivendata/cookiecutter-data-science
+```
+
+But during project progress was added some files, directories and deleted unnecessary files. 
+Resulting project organization looks like this:
+
 ------------
 
     ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
     │   ├── external       <- Data from third party sources.
@@ -39,6 +81,10 @@ Project Organization
     │   └── raw            <- The original, immutable data dump.
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
+    ├── Docker             <- Code for docker-compose services
+    │   ├── fastapi_model_service
+    │   ├── mlflow_image
+    │   └── nginx.conf
     │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     │
@@ -72,35 +118,47 @@ Project Organization
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
     │
+    ├── tests
+    │   ├── __init__.py
+    │   ├── test_clean_features.py
+    │   ├── test_drop_columns.py
+    │   └── test_split.py
+    ├── dvc.lock
+    ├── dvc.yaml
+    ├── params.json
+    ├── poetry.lock
+    ├── pyproject.toml
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
-
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
+### Workflow
 
-## Machine learning core of the project
+As workflow managers was tried Snakemake and DVC. Since DVC supports data versioning with workflow manager 
+the final decision is to use exactly DVC.
 
-постановка задачи
-описание данных
-результаты анализа и обработки данных
-результаты feature engineering
-используемые методы оптимизации
-метрики качества
+To store data remotely DVC uses <https://dagshub.com/> service and Minio hosted as docker service. Also 
+DVC was set up to track metrics. To get detail info see `dvc.yaml` file.
 
+Resulting DVC pipeline is following:
 
-## MLOps approaches
+![](./reports/figures/dvc_pipeline.png)
 
-система контроля версий
-инструменты контроля codestyle
-шаблон проекта / шаблонизаторы
-инструменты шаблонизации структуры проекта
-workflow менеджеры
-инструменты трекинга экспериментов
-методы и инструменты тестирования
-описание CI пайплайна
+### Experiment tracking tools
 
+Record and query experiments are performed via MLflow platform. The project uses MLflow tracking server 
+hosted in `https://dagshub.com/` and in own docker-compose service.
+
+### Testing tools
+
+The standard of testing python code is pytest package that is used in the project too. To run unit tests 
+was created tests package and integration test performed along with `dvc repro` procedure. All these 
+tools was included in gitlab CI.
+
+### Continuous integration pipeline
+
+For CI is used `.gitlab-ci.yml` that has two stages: static analysis and unit tests with integration tests.
 
 ## Project deployment
 
@@ -287,29 +345,40 @@ Some important concepts are:
 For details read <https://fastapi.tiangolo.com/deployment/concepts/>
 
 
-## Deployment issues and possible solutions
+## Project issues and possible solutions
+
+### Initialization issues
 
 #### Init raw files
 
-Configure gdrive remote storage:
+After cloning repo raw files don't exist:
 
-1. Create folder in gdrive and cd into it.
-2. Copy last part of uri.
-3. Add remote storage:
-    ```
-   $ dvc remote add -d gdrive://copied-last-part-uri
-    ```
-4. Push data to remote storage:
-    ```
-   $ dvc push
-    ```
-5. Follow dvc instructions: go to proposed url and give access rights to dvc.
+- Configure gdrive remote storage:
+
+  1. Create folder in gdrive and cd into it.
+  2. Copy last part of uri.
+  3. Add remote storage:
+      ```
+     $ dvc remote add -d gdrive://copied-last-part-uri
+      ```
+  4. Push data to remote storage:
+      ```
+     $ dvc push
+      ```
+  5. Follow dvc instructions: go to proposed url and give access rights to dvc.
+
+- use <https://dagshub.com> service.
 
 #### Init minio
 
-Use minio API available on python, js, java, go. It has method that can create buckets.
+1. To create necessary bucket automatically use minio API available on python, js, java, go. 
+All these have method that can create buckets.
+
+2. Is there necessary to include raw files in minio while first initialization?
 
 #### Init pgadmin
+
+To create pgadmin connection use some configurations file:
 
 1. For pre configuration see <https://stackoverflow.com/questions/64620446/adding-postgress-connections-to-pgadmin-in-docker-file>.
 
@@ -317,4 +386,27 @@ Use minio API available on python, js, java, go. It has method that can create b
 
 #### Init fastapi service
 
-pass
+- add checking model exists when fastapi_model_service starts
+
+- before run services need to dvc repro since it creates models for fastapi_model_service
+
+- 'fastapi_model_service' uses '.env', 'pyproject.toml' and 'poetry.lock' files - that is no DRY
+
+
+#### Required permissions to `pgadmin` directory
+
+It's need some simple script like described above that is executed before docker-compose start services.
+
+### Deployment issues
+
+- need https support
+
+- load balancers for all services
+
+- arguments of python package are not in configuration file that results in dvc and test duplicate code
+
+- testing the service requires deployment all services before it
+
+## Team
+
+There is one member of the project - the author Raphych.
