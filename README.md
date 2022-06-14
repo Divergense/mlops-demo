@@ -347,6 +347,14 @@ For details read <https://fastapi.tiangolo.com/deployment/concepts/>
 
 ## Project issues and possible solutions
 
+## ML issues
+
+1. Project don't use user reviews dataset.
+
+2. Reviews and applications are updated/created constantly over time. Need 
+regular parsing Google Play Store (Google offers API for that).
+
+
 ### Initialization issues
 
 #### Init raw files
@@ -367,24 +375,35 @@ After cloning repo raw files don't exist:
       ```
   5. Follow dvc instructions: go to proposed url and give access rights to dvc.
 
-- use <https://dagshub.com> service.
+- use <https://dagshub.com> service (at that time this approach is used)
+
+- create some script for example in bash that loads datasets from official source (like Kaggle).
 
 #### Init minio
 
-1. To create necessary bucket automatically use minio API available on python, js, java, go. 
+1. Currently, after first run of minio it's need to create manually some buckets that is not good. 
+To create necessary bucket automatically use minio API available on python, js, java, go. 
 All these have method that can create buckets.
 
-2. Is there necessary to include raw files in minio while first initialization?
+2. Is there necessary to include raw files in minio while first initialization? I guess no since 
+previous step solves this problem.
 
 #### Init pgadmin
 
-To create pgadmin connection use some configurations file:
+Before start pgadmin users have to create pgadmin connection manually. For automation 
+use some configuration files that allow do that automatically:
 
 1. For pre configuration see <https://stackoverflow.com/questions/64620446/adding-postgress-connections-to-pgadmin-in-docker-file>.
 
 2. Before start the service it is need bash script that sets required permissions to `pgadmin` volume.
 
+#### Required permissions to `pgadmin` directory
+
+It's need some simple script like described above that is executed before docker-compose start services.
+
 #### Init fastapi service
+
+There are bucnh of problem for the service:
 
 - add checking model exists when fastapi_model_service starts
 
@@ -392,10 +411,6 @@ To create pgadmin connection use some configurations file:
 
 - 'fastapi_model_service' uses '.env', 'pyproject.toml' and 'poetry.lock' files - that is no DRY
 
-
-#### Required permissions to `pgadmin` directory
-
-It's need some simple script like described above that is executed before docker-compose start services.
 
 ### Deployment issues
 
